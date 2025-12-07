@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction - Real Estate</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🏠 House Price Predictor</h1>
+                <p class="subtitle">Predict House Price</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                <!-- Form Section -->
+                <section class="form-section">
+                    <h2>Property Details</h2>
+                    <form id="predictionForm" class="prediction-form">
+                        
+                        <!-- Row 1: Area and Bedrooms -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="area">Area (Sq Ft) *</label>
+                                <input type="number" id="area" name="area" min="1650" max="16200" 
+                                       placeholder="Enter area in sq ft" required>
+                                <small>Range: 1650 - 16200 sq ft</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="bedrooms">Bedrooms *</label>
+                                <select id="bedrooms" name="bedrooms" required>
+                                    <option value="">Select bedrooms</option>
+                                    <option value="1">1 Bedroom</option>
+                                    <option value="2">2 Bedrooms</option>
+                                    <option value="3">3 Bedrooms</option>
+                                    <option value="4">4 Bedrooms</option>
+                                    <option value="5">5 Bedrooms</option>
+                                    <option value="6">6 Bedrooms</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Bathrooms and Stories -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="bathrooms">Bathrooms *</label>
+                                <select id="bathrooms" name="bathrooms" required>
+                                    <option value="">Select bathrooms</option>
+                                    <option value="1">1 Bathroom</option>
+                                    <option value="2">2 Bathrooms</option>
+                                    <option value="3">3 Bathrooms</option>
+                                    <option value="4">4 Bathrooms</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="stories">Stories *</label>
+                                <select id="stories" name="stories" required>
+                                    <option value="">Select stories</option>
+                                    <option value="1">1 Story</option>
+                                    <option value="2">2 Stories</option>
+                                    <option value="3">3 Stories</option>
+                                    <option value="4">4 Stories</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Parking and Furnishing -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="parking">Parking Spaces *</label>
+                                <select id="parking" name="parking" required>
+                                    <option value="">Select parking</option>
+                                    <option value="0">No Parking</option>
+                                    <option value="1">1 Space</option>
+                                    <option value="2">2 Spaces</option>
+                                    <option value="3">3 Spaces</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="furnishingstatus">Furnishing Status *</label>
+                                <select id="furnishingstatus" name="furnishingstatus" required>
+                                    <option value="">Select status</option>
+                                    <option value="furnished">Furnished</option>
+                                    <option value="semi-furnished">Semi-Furnished</option>
+                                    <option value="unfurnished">Unfurnished</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Row 4: Checkboxes (Features) -->
+                        <div class="form-row checkbox-row">
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="mainroad" name="mainroad" value="yes">
+                                    <span>Main Road Access</span>
+                                </label>
+                            </div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="guestroom" name="guestroom" value="yes">
+                                    <span>Guest Room</span>
+                                </label>
+                            </div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="basement" name="basement" value="yes">
+                                    <span>Basement</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Row 5: More Checkboxes -->
+                        <div class="form-row checkbox-row">
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="hotwaterheating" name="hotwaterheating" value="yes">
+                                    <span>Hot Water Heating</span>
+                                </label>
+                            </div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="airconditioning" name="airconditioning" value="yes">
+                                    <span>Air Conditioning</span>
+                                </label>
+                            </div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="prefarea" name="prefarea" value="yes">
+                                    <span>Preferred Area</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <span>🔮 Predict Price</span>
+                            </button>
+                            <button type="reset" class="btn btn-secondary">Clear Form</button>
+                        </div>
+
+                        <!-- Loading Spinner -->
+                        <div id="loading" class="loading hidden">
+                            <div class="spinner"></div>
+                            <p>Calculating predicted price...</p>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div id="error" class="error-message hidden"></div>
+
+                    </form>
+                </section>
+
+                <!-- Results Section -->
+                <section class="results-section">
+                    <div id="resultsContainer" class="results-container hidden">
+                        <h2>Prediction Result</h2>
+                        
+                        <div class="price-card">
+                            <div class="price-label">Estimated Price</div>
+                            <div class="price-value" id="predictedPrice">PKR 0</div>
+                            <div class="price-confidence">Based on Linear Regression Model</div>
+                        </div>
+
+                        <div class="details-card">
+                            <h3>Property Summary</h3>
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <span class="detail-label">Area:</span>
+                                    <span class="detail-value" id="detailArea">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Bedrooms:</span>
+                                    <span class="detail-value" id="detailBedrooms">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Bathrooms:</span>
+                                    <span class="detail-value" id="detailBathrooms">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Stories:</span>
+                                    <span class="detail-value" id="detailStories">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Parking:</span>
+                                    <span class="detail-value" id="detailParking">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Furnishing:</span>
+                                    <span class="detail-value" id="detailFurnishing">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="features-card">
+                            <h3>Special Features</h3>
+                            <div class="features-list" id="featuresList"></div>
+                        </div>
+                    </div>
+
+                    <!-- Info Section when no results -->
+                    <div id="infoSection" class="info-section">
+                        <div class="info-card">
+                            <h3>📊 About This Predictor</h3>
+                            <ul>
+                                <li><strong>Model:</strong> Linear Regression</li>
+                                <li><strong>Samples Trained:</strong> 545 properties</li>
+                                <li><strong>Features:</strong> 13 input parameters</li>
+                                <li><strong>Location:</strong> Pakistan Real Estate</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-card">
+                            <h3>💡 Key Factors Affecting Price</h3>
+                            <ol>
+                                <li><strong>Bathrooms</strong> - Most important factor</li>
+                                <li><strong>Air Conditioning</strong> - Premium feature</li>
+                                <li><strong>Hot Water Heating</strong> - Adds value</li>
+                                <li><strong>Preferred Area</strong> - Location matters</li>
+                                <li><strong>Stories</strong> - More floors = higher price</li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 House Price Predictor | Built with Flask & Machine Learning | Data Science Project</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
